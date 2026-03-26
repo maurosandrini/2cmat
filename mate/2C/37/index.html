@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Disequazioni con Grafici - 2C</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3.0.1/dist/chartjs-plugin-annotation.min.js"></script>
+<style>
+  :root {
+    --bg: #fafafa;
+    --card: #ffffff;
+    --accent: #2563eb;
+    --accent2: #dc2626;
+    --green: #16a34a;
+    --text: #1e293b;
+    --muted: #64748b;
+    --border: #e2e8f0;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: var(--bg); color: var(--text);
+    min-height: 100vh;
+  }
+  .container { max-width: 900px; margin: 0 auto; padding: 16px; }
+
+  /* Header */
+  .header {
+    text-align: center; padding: 24px 0 16px;
+    border-bottom: 2px solid var(--accent);
+    margin-bottom: 20px;
+  }
+  .header h1 { font-size: 1.8rem; color: var(--accent); }
+  .header p { color: var(--muted); margin-top: 4px; }
+
+  /* Navigation */
+  .nav {
+    display: flex; gap: 6px; justify-content: center;
+    flex-wrap: wrap; margin-bottom: 20px;
+  }
+  .nav button {
+    padding: 8px 14px; border: 2px solid var(--border);
+    border-radius: 8px; background: var(--card);
+    font-size: 0.85rem; cursor: pointer; transition: all 0.2s;
+    font-weight: 500;
+  }
+  .nav button:hover { border-color: var(--accent); color: var(--accent); }
+  .nav button.active {
+    background: var(--accent); color: white;
+    border-color: var(--accent);
+  }
+  .nav button.done {
+    background: #dcfce7; border-color: var(--green); color: var(--green);
+  }
+
+  /* Slides */
+  .slide { display: none; }
+  .slide.active { display: block; }
+  .card {
+    background: var(--card); border-radius: 12px;
+    border: 1px solid var(--border);
+    padding: 24px; margin-bottom: 16px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  }
+  .card h2 {
+    font-size: 1.3rem; margin-bottom: 12px;
+    color: var(--accent); display: flex; align-items: center; gap: 8px;
+  }
+  .card h3 { font-size: 1.1rem; margin: 12px 0 8px; }
+  .card p, .card li { font-size: 1rem; line-height: 1.6; margin-bottom: 8px; }
+  .card ul { padding-left: 20px; }
+
+  /* Formula highlight */
+  .formula {
+    background: #eff6ff; border: 1px solid #bfdbfe;
+    border-radius: 8px; padding: 12px 16px;
+    font-size: 1.1rem; text-align: center;
+    margin: 12px 0; font-weight: 600;
+  }
+  .formula.red {
+    background: #fef2f2; border-color: #fecaca;
+  }
+  .formula.green {
+    background: #f0fdf4; border-color: #bbf7d0;
+  }
+
+  /* Table */
+  table {
+    border-collapse: collapse; margin: 12px auto;
+    font-size: 1rem;
+  }
+  th, td {
+    border: 1px solid var(--border);
+    padding: 8px 16px; text-align: center;
+  }
+  th { background: #f1f5f9; font-weight: 600; }
+  .highlight-row { background: #fef9c3; }
+
+  /* Chart */
+  .chart-wrap {
+    max-width: 600px; margin: 16px auto;
+    position: relative;
+  }
+
+  /* Step reveal */
+  .step { opacity: 0.3; transition: opacity 0.4s; margin-bottom: 12px; }
+  .step.visible { opacity: 1; }
+  .step-number {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 28px; height: 28px; border-radius: 50%;
+    background: var(--accent); color: white; font-weight: 700;
+    font-size: 0.85rem; margin-right: 8px; flex-shrink: 0;
+  }
+  .step-header { display: flex; align-items: center; margin-bottom: 6px; }
+  .step-header strong { font-size: 1.05rem; }
+
+  /* Buttons */
+  .btn-row {
+    display: flex; gap: 10px; justify-content: center;
+    margin-top: 16px;
+  }
+  .btn {
+    padding: 10px 24px; border: none; border-radius: 8px;
+    font-size: 1rem; font-weight: 600; cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-primary { background: var(--accent); color: white; }
+  .btn-primary:hover { background: #1d4ed8; }
+  .btn-secondary { background: #f1f5f9; color: var(--text); }
+  .btn-secondary:hover { background: #e2e8f0; }
+  .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  /* Callout */
+  .callout {
+    border-left: 4px solid var(--accent);
+    background: #eff6ff; padding: 12px 16px;
+    border-radius: 0 8px 8px 0; margin: 12px 0;
+  }
+  .callout.warn {
+    border-color: #f59e0b; background: #fffbeb;
+  }
+  .callout.success {
+    border-color: var(--green); background: #f0fdf4;
+  }
+
+  /* Footer nav */
+  .footer-nav {
+    display: flex; justify-content: space-between;
+    margin-top: 20px; padding-top: 16px;
+    border-top: 1px solid var(--border);
+  }
+
+  /* Responsive */
+  @media (max-width: 600px) {
+    .container { padding: 10px; }
+    .card { padding: 16px; }
+    .header h1 { font-size: 1.4rem; }
+    .nav button { padding: 6px 10px; font-size: 0.78rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+<div class="header">
+  <h1>Disequazioni con Grafici</h1>
+  <p>Classe 2C &mdash; Presentazione interattiva passo passo</p>
+</div>
+
+<div class="nav" id="nav"></div>
+
+<!-- ====== SLIDE 0: Intro ====== -->
+<div class="slide" id="slide-0">
+<div class="card">
+  <h2>Cosa impariamo oggi?</h2>
+  <p>A risolvere le <strong>disequazioni</strong> usando i <strong>grafici</strong>.</p>
+  <p>Invece di fare solo i calcoli, impariamo a <strong>disegnare le due formule</strong> su un grafico e a <strong>leggere la risposta</strong> guardando dove una riga sta sopra o sotto l'altra.</p>
+
+  <div class="callout">
+    <strong>Metodo in 5 passi:</strong><br>
+    1. Scegli l'incognita<br>
+    2. Scrivi le formule<br>
+    3. Risolvi con i calcoli<br>
+    4. Disegna il grafico<br>
+    5. Leggi la risposta dal grafico
+  </div>
+
+  <p>Premi <strong>Avanti</strong> per cominciare!</p>
+</div>
+</div>
+
+<!-- ====== SLIDE 1: Il problema ====== -->
+<div class="slide" id="slide-1">
+<div class="card">
+  <h2>Il problema</h2>
+  <p>Un negozio online ha due piani tariffari:</p>
+  <ul>
+    <li><strong>Piano A:</strong> 5 &euro; fissi + 3 &euro; per ogni articolo</li>
+    <li><strong>Piano B:</strong> 20 &euro; fissi, spedizione gratuita</li>
+  </ul>
+  <p style="margin-top:12px; font-size:1.15rem;">
+    <strong>Domanda:</strong> Per quanti articoli il Piano A costa <strong>meno</strong> del Piano B?
+  </p>
+  <div class="callout warn">
+    Prima di toccare i calcoli, dobbiamo capire bene cosa chiedono: vogliamo sapere <strong>quando A conviene</strong>.
+  </div>
+</div>
+</div>
+
+<!-- ====== SLIDE 2: Passo 1 - Incognita ====== -->
+<div class="slide" id="slide-2">
+<div class="card">
+  <h2>Passo 1: Scegli l'incognita</h2>
+
+  <div class="step visible">
+    <div class="step-header">
+      <span class="step-number">1</span>
+      <strong>Cosa non sappiamo?</strong>
+    </div>
+    <p>Non sappiamo <strong>quanti articoli</strong> comprare. Quello che cambia e' il numero di articoli.</p>
+  </div>
+
+  <div class="formula">
+    x = numero di articoli
+  </div>
+
+  <div class="callout">
+    La <strong>x</strong> e' sempre la cosa che non conosciamo e che vogliamo trovare.
+  </div>
+</div>
+</div>
+
+<!-- ====== SLIDE 3: Passo 2 - Formule ====== -->
+<div class="slide" id="slide-3">
+<div class="card">
+  <h2>Passo 2: Scrivi le due formule</h2>
+
+  <div class="step" id="s3-1">
+    <div class="step-header">
+      <span class="step-number">1</span>
+      <strong>Formula del Piano A</strong>
+    </div>
+    <p>Pago 5 &euro; fissi + 3 &euro; per ogni articolo:</p>
+    <div class="formula">Costo A = 3x + 5</div>
+  </div>
+
+  <div class="step" id="s3-2">
+    <div class="step-header">
+      <span class="step-number">2</span>
+      <strong>Formula del Piano B</strong>
+    </div>
+    <p>Pago sempre 20 &euro;, non importa quanti articoli:</p>
+    <div class="formula red">Costo B = 20</div>
+  </div>
+
+  <div class="step" id="s3-3">
+    <div class="step-header">
+      <span class="step-number">3</span>
+      <strong>La disequazione</strong>
+    </div>
+    <p>Voglio sapere quando A costa <strong>meno</strong> di B:</p>
+    <div class="formula green">3x + 5 &lt; 20</div>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn btn-primary" onclick="revealSteps('s3', 3)">Mostra passo dopo passo</button>
+  </div>
+</div>
+</div>
+
+<!-- ====== SLIDE 4: Passo 3 - Calcoli ====== -->
+<div class="slide" id="slide-4">
+<div class="card">
+  <h2>Passo 3: Risolvi con i calcoli</h2>
+
+  <div class="step" id="s4-1">
+    <div class="step-header">
+      <span class="step-number">1</span>
+      <strong>Partiamo dalla disequazione</strong>
+    </div>
+    <div class="formula">3x + 5 &lt; 20</div>
+  </div>
+
+  <div class="step" id="s4-2">
+    <div class="step-header">
+      <span class="step-number">2</span>
+      <strong>Tolgo 5 da entrambe le parti</strong>
+    </div>
+    <div class="formula">3x &lt; 15</div>
+  </div>
+
+  <div class="step" id="s4-3">
+    <div class="step-header">
+      <span class="step-number">3</span>
+      <strong>Divido entrambe le parti per 3</strong>
+    </div>
+    <div class="formula green">x &lt; 5</div>
+    <p>Il Piano A conviene quando compro <strong>meno di 5 articoli</strong>.</p>
+  </div>
+
+  <div class="callout">
+    Abbiamo la risposta con i calcoli. Ora verifichiamola con il <strong>grafico</strong>!
+  </div>
+
+  <div class="btn-row">
+    <button class="btn btn-primary" onclick="revealSteps('s4', 3)">Mostra passo dopo passo</button>
+  </div>
+</div>
+</div>
+
+<!-- ====== SLIDE 5: Passo 4a - Tabella ====== -->
+<div class="slide" id="slide-5">
+<div class="card">
+  <h2>Passo 4a: Fai la tabella</h2>
+  <p>Per disegnare il grafico, prima calcola alcuni valori. Scegli dei numeri per x (parti da 0) e calcola il costo con la formula.</p>
+
+  <table id="costTable">
+    <tr>
+      <th>x (articoli)</th>
+      <th>Costo A = 3x + 5</th>
+      <th>Costo B</th>
+    </tr>
+  </table>
+
+  <div class="btn-row">
+    <button class="btn btn-primary" id="addRowBtn" onclick="addTableRow()">Aggiungi riga</button>
+  </div>
+
+  <div class="callout" id="tableComplete" style="display:none;">
+    <strong>Tabella completa!</strong> Nota come il Costo A cresce mentre il Costo B resta fisso a 20. Si incrociano quando x = 5!
+  </div>
+</div>
+</div>
+
+<!-- ====== SLIDE 6: Passo 4b - Segna i punti ====== -->
+<div class="slide" id="slide-6">
+<div class="card">
+  <h2>Passo 4b: Segna i punti sul grafico</h2>
+  <p>Ogni riga della tabella diventa un <strong>punto</strong> sul grafico:</p>
+  <ul>
+    <li>Vai avanti sull'asse orizzontale (x = articoli)</li>
+    <li>Sali sull'asse verticale (y = costo in &euro;)</li>
+    <li>Metti un pallino</li>
+  </ul>
+
+  <div class="chart-wrap">
+    <canvas id="chart-points"></canvas>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn btn-primary" id="addPointBtn" onclick="addPoint()">Segna prossimo punto</button>
+  </div>
+
+  <div class="callout" id="pointsComplete" style="display:none;">
+    Tutti i punti sono segnati. Ora uniscili con una riga!
+  </div>
+</div>
+</div>
+
+<!-- ====== SLIDE 7: Passo 4c - Unisci ====== -->
+<div class="slide" id="slide-7">
+<div class="card">
+  <h2>Passo 4c: Unisci i punti con il righello</h2>
+  <p>Collega i punti <span style="color:var(--accent);">blu</span> (Costo A) con una riga dritta.
+     Il Costo B e' una riga <span style="color:var(--accent2);">rossa orizzontale</span> (resta sempre a 20).</p>
+
+  <div class="chart-wrap">
+    <canvas id="chart-lines"></canvas>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn btn-primary" onclick="showLines()">Disegna le righe</button>
+    <button class="btn btn-secondary" onclick="showIntersection()" id="interBtn" disabled>Mostra incrocio</button>
+  </div>
+
+  <div class="callout success" id="intersectionMsg" style="display:none;">
+    Le due righe si incrociano in <strong>x = 5</strong> (costo = 20 &euro;). Questo e' il punto dove i due piani costano uguale!
+  </div>
+</div>
+</div>
+
+<!-- ====== SLIDE 8: Passo 5 - Leggi risposta ====== -->
+<div class="slide" id="slide-8">
+<div class="card">
+  <h2>Passo 5: Leggi la risposta dal grafico</h2>
+
+  <div class="chart-wrap">
+    <canvas id="chart-final"></canvas>
+  </div>
+
+  <div class="step" id="s8-1">
+    <div class="step-header">
+      <span class="step-number">1</span>
+      <strong>Guarda: dove sta la riga blu?</strong>
+    </div>
+    <p>A sinistra dell'incrocio (x &lt; 5), la riga blu sta <strong>sotto</strong> la riga rossa.</p>
+    <p>Questo significa: il Costo A e' <strong>minore</strong> del Costo B.</p>
+  </div>
+
+  <div class="step" id="s8-2">
+    <div class="step-header">
+      <span class="step-number">2</span>
+      <strong>La risposta</strong>
+    </div>
+    <div class="formula green">
+      Il Piano A conviene per meno di 5 articoli.
+    </div>
+    <p>Uguale a quello che avevamo trovato con i calcoli: <strong>x &lt; 5</strong></p>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn btn-primary" onclick="revealSteps('s8', 2); showFinalZone();">Mostra la zona soluzione</button>
+  </div>
+</div>
+</div>
+
+<!-- ====== SLIDE 9: Regola generale ====== -->
+<div class="slide" id="slide-9">
+<div class="card">
+  <h2>Come leggere QUALSIASI grafico</h2>
+
+  <div class="callout">
+    <p><strong>Sotto = costa meno.</strong> Se cerchi quando una cosa costa meno, guarda dove la sua riga sta sotto l'altra.</p>
+  </div>
+  <div class="callout warn">
+    <p><strong>Sopra = costa di piu'.</strong> Se cerchi quando una cosa costa di piu', guarda dove la sua riga sta sopra l'altra.</p>
+  </div>
+  <div class="callout success">
+    <p><strong>Incrocio = costano uguale.</strong> Il punto dove le righe si toccano e' dove i due costi sono identici.</p>
+  </div>
+
+  <h3 style="margin-top:16px;">Ricorda i 5 passi:</h3>
+  <ol style="padding-left:20px;">
+    <li>Scegli l'incognita (x = cosa non sai)</li>
+    <li>Scrivi le due formule</li>
+    <li>Risolvi con i calcoli</li>
+    <li>Disegna il grafico (tabella, punti, righe)</li>
+    <li>Leggi la risposta (sotto/sopra/incrocio)</li>
+  </ol>
+
+  <p style="margin-top:16px; text-align:center; font-size:1.2rem;">
+    <strong>Ora tocca a voi! Prendete la scheda A o B.</strong>
+  </p>
+</div>
+</div>
+
+</div><!-- /container -->
+
+<script>
+// === SLIDE NAVIGATION ===
+const slides = document.querySelectorAll('.slide');
+const titles = [
+  'Intro', 'Problema', 'Passo 1', 'Passo 2',
+  'Passo 3', 'Tabella', 'Punti', 'Righe',
+  'Risposta', 'Regola'
+];
+let current = 0;
+
+function buildNav() {
+  const nav = document.getElementById('nav');
+  titles.forEach((t, i) => {
+    const btn = document.createElement('button');
+    btn.textContent = t;
+    btn.onclick = () => goTo(i);
+    btn.id = 'nav-' + i;
+    nav.appendChild(btn);
+  });
+}
+
+function goTo(i) {
+  slides[current].classList.remove('active');
+  document.getElementById('nav-' + current).classList.remove('active');
+  if (current < i) document.getElementById('nav-' + current).classList.add('done');
+  current = i;
+  slides[current].classList.add('active');
+  document.getElementById('nav-' + current).classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  // init charts if needed
+  if (i === 6 && !chartPointsInit) initChartPoints();
+  if (i === 7 && !chartLinesInit) initChartLines();
+  if (i === 8 && !chartFinalInit) initChartFinal();
+}
+
+buildNav();
+goTo(0);
+
+// === STEP REVEAL ===
+const stepCounters = {};
+function revealSteps(prefix, total) {
+  if (!stepCounters[prefix]) stepCounters[prefix] = 0;
+  stepCounters[prefix]++;
+  const n = stepCounters[prefix];
+  if (n <= total) {
+    document.getElementById(prefix + '-' + n).classList.add('visible');
+  }
+  if (n >= total) {
+    // disable button
+    event.target.disabled = true;
+    event.target.textContent = 'Tutti i passi mostrati';
+  }
+}
+
+// === TABLE BUILDER (Slide 5) ===
+const tableData = [
+  { x: 0, a: 5,  b: 20 },
+  { x: 1, a: 8,  b: 20 },
+  { x: 2, a: 11, b: 20 },
+  { x: 3, a: 14, b: 20 },
+  { x: 5, a: 20, b: 20 },
+  { x: 7, a: 26, b: 20 },
+];
+let tableIdx = 0;
+
+function addTableRow() {
+  if (tableIdx >= tableData.length) return;
+  const d = tableData[tableIdx];
+  const table = document.getElementById('costTable');
+  const row = table.insertRow();
+  const cls = d.a === d.b ? ' class="highlight-row"' : '';
+  row.innerHTML = `<td${cls}>${d.x}</td><td${cls}>3 &times; ${d.x} + 5 = <strong>${d.a}</strong></td><td${cls}><strong>${d.b}</strong></td>`;
+  tableIdx++;
+  if (tableIdx >= tableData.length) {
+    document.getElementById('addRowBtn').disabled = true;
+    document.getElementById('addRowBtn').textContent = 'Tabella completa';
+    document.getElementById('tableComplete').style.display = 'block';
+  }
+}
+
+// === CHART: Points (Slide 6) ===
+let chartPointsInit = false;
+let chartPointsObj = null;
+let pointIdx = 0;
+const pointsA = [{x:0,y:5},{x:1,y:8},{x:2,y:11},{x:3,y:14},{x:5,y:20},{x:7,y:26}];
+const pointsB = [{x:0,y:20},{x:1,y:20},{x:2,y:20},{x:3,y:20},{x:5,y:20},{x:7,y:20}];
+let shownA = []; let shownB = [];
+
+function initChartPoints() {
+  chartPointsInit = true;
+  const ctx = document.getElementById('chart-points').getContext('2d');
+  chartPointsObj = new Chart(ctx, {
+    type: 'scatter',
+    data: {
+      datasets: [
+        { label: 'Costo A', data: shownA, backgroundColor: '#2563eb', pointRadius: 8, pointHoverRadius: 10 },
+        { label: 'Costo B', data: shownB, backgroundColor: '#dc2626', pointRadius: 8, pointHoverRadius: 10 }
+      ]
+    },
+    options: {
+      responsive: true,
+      scales: {
+        x: { title: { display: true, text: 'Articoli (x)', font: { size: 14 } }, min: 0, max: 8, ticks: { stepSize: 1 } },
+        y: { title: { display: true, text: 'Costo (\u20AC)', font: { size: 14 } }, min: 0, max: 30, ticks: { stepSize: 5 } }
+      },
+      plugins: { legend: { labels: { font: { size: 13 } } } }
+    }
+  });
+}
+
+function addPoint() {
+  if (pointIdx >= pointsA.length) return;
+  shownA.push(pointsA[pointIdx]);
+  shownB.push(pointsB[pointIdx]);
+  chartPointsObj.update();
+  pointIdx++;
+  if (pointIdx >= pointsA.length) {
+    document.getElementById('addPointBtn').disabled = true;
+    document.getElementById('addPointBtn').textContent = 'Tutti i punti segnati';
+    document.getElementById('pointsComplete').style.display = 'block';
+  }
+}
+
+// === CHART: Lines (Slide 7) ===
+let chartLinesInit = false;
+let chartLinesObj = null;
+
+function initChartLines() {
+  chartLinesInit = true;
+  const ctx = document.getElementById('chart-lines').getContext('2d');
+  chartLinesObj = new Chart(ctx, {
+    type: 'scatter',
+    data: {
+      datasets: [
+        { label: 'Costo A (punti)', data: [...pointsA], backgroundColor: '#2563eb', pointRadius: 7 },
+        { label: 'Costo B (punti)', data: [...pointsB.filter((v,i)=>[0,3,5].includes(i))], backgroundColor: '#dc2626', pointRadius: 7 },
+        { label: 'Costo A (riga)', data: [], type: 'line', borderColor: '#2563eb', borderWidth: 3, pointRadius: 0, fill: false },
+        { label: 'Costo B (riga)', data: [], type: 'line', borderColor: '#dc2626', borderWidth: 3, borderDash: [8,4], pointRadius: 0, fill: false }
+      ]
+    },
+    options: {
+      responsive: true,
+      scales: {
+        x: { title: { display: true, text: 'Articoli (x)', font: { size: 14 } }, min: 0, max: 8, ticks: { stepSize: 1 } },
+        y: { title: { display: true, text: 'Costo (\u20AC)', font: { size: 14 } }, min: 0, max: 30, ticks: { stepSize: 5 } }
+      },
+      plugins: {
+        legend: { labels: { font: { size: 13 }, filter: item => !item.text.includes('riga') } },
+        annotation: { annotations: {} }
+      }
+    }
+  });
+}
+
+function showLines() {
+  chartLinesObj.data.datasets[2].data = [{x:0,y:5},{x:8,y:29}];
+  chartLinesObj.data.datasets[3].data = [{x:0,y:20},{x:8,y:20}];
+  chartLinesObj.update();
+  document.getElementById('interBtn').disabled = false;
+}
+
+function showIntersection() {
+  chartLinesObj.options.plugins.annotation.annotations = {
+    point1: { type: 'point', xValue: 5, yValue: 20, radius: 10, backgroundColor: 'rgba(0,0,0,0)', borderColor: '#000', borderWidth: 3 },
+    line1: { type: 'line', xMin: 5, xMax: 5, yMin: 0, yMax: 20, borderColor: '#888', borderWidth: 1.5, borderDash: [4,4] },
+    label1: { type: 'label', xValue: 5.3, yValue: 22.5, content: 'Incrocio! (5, 20)', font: { size: 13, weight: 'bold' } }
+  };
+  chartLinesObj.update();
+  document.getElementById('intersectionMsg').style.display = 'block';
+}
+
+// === CHART: Final (Slide 8) ===
+let chartFinalInit = false;
+let chartFinalObj = null;
+
+function initChartFinal() {
+  chartFinalInit = true;
+  const ctx = document.getElementById('chart-final').getContext('2d');
+  chartFinalObj = new Chart(ctx, {
+    type: 'scatter',
+    data: {
+      datasets: [
+        { label: 'Costo A', data: [{x:0,y:5},{x:8,y:29}], type: 'line', borderColor: '#2563eb', borderWidth: 3, pointRadius: 0, fill: false },
+        { label: 'Costo B', data: [{x:0,y:20},{x:8,y:20}], type: 'line', borderColor: '#dc2626', borderWidth: 3, borderDash: [8,4], pointRadius: 0, fill: false },
+        { label: 'Incrocio', data: [{x:5,y:20}], backgroundColor: '#000', pointRadius: 10, pointStyle: 'circle' }
+      ]
+    },
+    options: {
+      responsive: true,
+      scales: {
+        x: { title: { display: true, text: 'Articoli (x)', font: { size: 14 } }, min: 0, max: 8, ticks: { stepSize: 1 } },
+        y: { title: { display: true, text: 'Costo (\u20AC)', font: { size: 14 } }, min: 0, max: 30, ticks: { stepSize: 5 } }
+      },
+      plugins: {
+        legend: { labels: { font: { size: 13 } } },
+        annotation: { annotations: {
+          vline: { type: 'line', xMin: 5, xMax: 5, yMin: 0, yMax: 20, borderColor: '#888', borderWidth: 1.5, borderDash: [4,4] },
+          label1: { type: 'label', xValue: 5.2, yValue: 22, content: '(5, 20)', font: { size: 12, weight: 'bold' } }
+        }}
+      }
+    }
+  });
+}
+
+function showFinalZone() {
+  // Add green fill zone
+  chartFinalObj.data.datasets.push({
+    label: 'A costa MENO (zona verde)',
+    data: [{x:0,y:5},{x:5,y:20},{x:5,y:20},{x:0,y:20}],
+    type: 'line', fill: true,
+    backgroundColor: 'rgba(22,163,106,0.2)',
+    borderColor: 'rgba(22,163,106,0.5)',
+    borderWidth: 0, pointRadius: 0
+  });
+  chartFinalObj.options.plugins.annotation.annotations.braceLabel = {
+    type: 'label', xValue: 2.5, yValue: 2,
+    content: 'A sta SOTTO B = A costa meno',
+    font: { size: 13, weight: 'bold' },
+    color: '#16a34a'
+  };
+  chartFinalObj.update();
+}
+
+// Keyboard nav
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' && current < slides.length - 1) goTo(current + 1);
+  if (e.key === 'ArrowLeft' && current > 0) goTo(current - 1);
+});
+</script>
+
+</body>
+</html>
