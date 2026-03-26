@@ -8,155 +8,190 @@
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3.0.1/dist/chartjs-plugin-annotation.min.js"></script>
 <style>
   :root {
-    --bg: #fafafa;
-    --card: #ffffff;
-    --accent: #2563eb;
-    --accent2: #dc2626;
-    --green: #16a34a;
-    --text: #1e293b;
-    --muted: #64748b;
-    --border: #e2e8f0;
+    --bg: #0f172a;
+    --card: #1e293b;
+    --accent: #38bdf8;
+    --accent2: #f87171;
+    --green: #4ade80;
+    --yellow: #fbbf24;
+    --text: #f1f5f9;
+    --muted: #94a3b8;
+    --border: #334155;
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body {
     font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
     background: var(--bg); color: var(--text);
-    min-height: 100vh;
+    min-height: 100vh; font-size: 18px;
   }
-  .container { max-width: 900px; margin: 0 auto; padding: 16px; }
+  .container { max-width: 960px; margin: 0 auto; padding: 12px 16px 100px; }
 
   /* Header */
   .header {
-    text-align: center; padding: 24px 0 16px;
-    border-bottom: 2px solid var(--accent);
-    margin-bottom: 20px;
+    text-align: center; padding: 18px 0 14px;
+    border-bottom: 3px solid var(--accent);
+    margin-bottom: 16px;
   }
-  .header h1 { font-size: 1.8rem; color: var(--accent); }
-  .header p { color: var(--muted); margin-top: 4px; }
+  .header h1 { font-size: 2.2rem; color: var(--accent); letter-spacing: -0.5px; }
+  .header p { color: var(--muted); margin-top: 4px; font-size: 1.1rem; }
 
-  /* Navigation */
+  /* Top navigation pills */
   .nav {
-    display: flex; gap: 6px; justify-content: center;
-    flex-wrap: wrap; margin-bottom: 20px;
+    display: flex; gap: 5px; justify-content: center;
+    flex-wrap: wrap; margin-bottom: 16px;
   }
   .nav button {
-    padding: 8px 14px; border: 2px solid var(--border);
+    padding: 7px 12px; border: 2px solid var(--border);
     border-radius: 8px; background: var(--card);
     font-size: 0.85rem; cursor: pointer; transition: all 0.2s;
-    font-weight: 500;
+    font-weight: 600; color: var(--muted);
   }
   .nav button:hover { border-color: var(--accent); color: var(--accent); }
   .nav button.active {
-    background: var(--accent); color: white;
+    background: var(--accent); color: var(--bg);
     border-color: var(--accent);
   }
   .nav button.done {
-    background: #dcfce7; border-color: var(--green); color: var(--green);
+    background: #064e3b; border-color: var(--green); color: var(--green);
+  }
+
+  /* Slide counter */
+  .slide-counter {
+    text-align: center; color: var(--muted);
+    font-size: 0.9rem; margin-bottom: 10px;
   }
 
   /* Slides */
   .slide { display: none; }
   .slide.active { display: block; }
   .card {
-    background: var(--card); border-radius: 12px;
+    background: var(--card); border-radius: 14px;
     border: 1px solid var(--border);
-    padding: 24px; margin-bottom: 16px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    padding: 28px; margin-bottom: 16px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
   }
   .card h2 {
-    font-size: 1.3rem; margin-bottom: 12px;
-    color: var(--accent); display: flex; align-items: center; gap: 8px;
+    font-size: 1.6rem; margin-bottom: 14px;
+    color: var(--accent); display: flex; align-items: center; gap: 10px;
   }
-  .card h3 { font-size: 1.1rem; margin: 12px 0 8px; }
-  .card p, .card li { font-size: 1rem; line-height: 1.6; margin-bottom: 8px; }
-  .card ul { padding-left: 20px; }
+  .card h3 { font-size: 1.2rem; margin: 14px 0 10px; color: var(--yellow); }
+  .card p, .card li { font-size: 1.1rem; line-height: 1.7; margin-bottom: 10px; }
+  .card ul, .card ol { padding-left: 24px; }
+  .card strong { color: var(--yellow); }
 
   /* Formula highlight */
   .formula {
-    background: #eff6ff; border: 1px solid #bfdbfe;
-    border-radius: 8px; padding: 12px 16px;
-    font-size: 1.1rem; text-align: center;
-    margin: 12px 0; font-weight: 600;
+    background: #1e3a5f; border: 2px solid var(--accent);
+    border-radius: 10px; padding: 14px 20px;
+    font-size: 1.35rem; text-align: center;
+    margin: 14px 0; font-weight: 700; color: var(--accent);
   }
   .formula.red {
-    background: #fef2f2; border-color: #fecaca;
+    background: #3b1a1a; border-color: var(--accent2); color: var(--accent2);
   }
   .formula.green {
-    background: #f0fdf4; border-color: #bbf7d0;
+    background: #0a3622; border-color: var(--green); color: var(--green);
   }
 
   /* Table */
   table {
-    border-collapse: collapse; margin: 12px auto;
-    font-size: 1rem;
+    border-collapse: collapse; margin: 14px auto;
+    font-size: 1.05rem; width: 100%; max-width: 560px;
   }
   th, td {
     border: 1px solid var(--border);
-    padding: 8px 16px; text-align: center;
+    padding: 10px 16px; text-align: center;
   }
-  th { background: #f1f5f9; font-weight: 600; }
-  .highlight-row { background: #fef9c3; }
+  th { background: #334155; font-weight: 700; color: var(--accent); }
+  td { color: var(--text); }
+  .highlight-row { background: #422006; }
+  .highlight-row td { color: var(--yellow); font-weight: 700; }
 
   /* Chart */
   .chart-wrap {
-    max-width: 600px; margin: 16px auto;
-    position: relative;
+    max-width: 620px; margin: 16px auto;
+    background: #ffffff; border-radius: 10px; padding: 10px;
   }
 
   /* Step reveal */
-  .step { opacity: 0.3; transition: opacity 0.4s; margin-bottom: 12px; }
-  .step.visible { opacity: 1; }
+  .step { opacity: 0.2; transition: opacity 0.5s; margin-bottom: 14px; padding: 10px; border-radius: 8px; }
+  .step.visible { opacity: 1; background: rgba(56,189,248,0.08); }
   .step-number {
     display: inline-flex; align-items: center; justify-content: center;
-    width: 28px; height: 28px; border-radius: 50%;
-    background: var(--accent); color: white; font-weight: 700;
-    font-size: 0.85rem; margin-right: 8px; flex-shrink: 0;
+    width: 32px; height: 32px; border-radius: 50%;
+    background: var(--accent); color: var(--bg); font-weight: 800;
+    font-size: 0.95rem; margin-right: 10px; flex-shrink: 0;
   }
   .step-header { display: flex; align-items: center; margin-bottom: 6px; }
-  .step-header strong { font-size: 1.05rem; }
+  .step-header strong { font-size: 1.15rem; color: var(--text); }
 
   /* Buttons */
   .btn-row {
-    display: flex; gap: 10px; justify-content: center;
-    margin-top: 16px;
+    display: flex; gap: 12px; justify-content: center;
+    margin-top: 18px; flex-wrap: wrap;
   }
   .btn {
-    padding: 10px 24px; border: none; border-radius: 8px;
-    font-size: 1rem; font-weight: 600; cursor: pointer;
+    padding: 12px 28px; border: none; border-radius: 10px;
+    font-size: 1.05rem; font-weight: 700; cursor: pointer;
     transition: all 0.2s;
   }
-  .btn-primary { background: var(--accent); color: white; }
-  .btn-primary:hover { background: #1d4ed8; }
-  .btn-secondary { background: #f1f5f9; color: var(--text); }
-  .btn-secondary:hover { background: #e2e8f0; }
-  .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  .btn-primary { background: var(--accent); color: var(--bg); }
+  .btn-primary:hover { background: #7dd3fc; }
+  .btn-secondary { background: var(--border); color: var(--text); }
+  .btn-secondary:hover { background: #475569; }
+  .btn:disabled { opacity: 0.3; cursor: not-allowed; }
 
   /* Callout */
   .callout {
-    border-left: 4px solid var(--accent);
-    background: #eff6ff; padding: 12px 16px;
-    border-radius: 0 8px 8px 0; margin: 12px 0;
+    border-left: 5px solid var(--accent);
+    background: rgba(56,189,248,0.1); padding: 14px 18px;
+    border-radius: 0 10px 10px 0; margin: 14px 0;
+    font-size: 1.05rem;
   }
+  .callout strong { color: var(--accent); }
   .callout.warn {
-    border-color: #f59e0b; background: #fffbeb;
+    border-color: var(--yellow); background: rgba(251,191,36,0.1);
   }
+  .callout.warn strong { color: var(--yellow); }
   .callout.success {
-    border-color: var(--green); background: #f0fdf4;
+    border-color: var(--green); background: rgba(74,222,128,0.1);
   }
+  .callout.success strong { color: var(--green); }
 
-  /* Footer nav */
-  .footer-nav {
-    display: flex; justify-content: space-between;
-    margin-top: 20px; padding-top: 16px;
-    border-top: 1px solid var(--border);
+  /* ===== FIXED BOTTOM NAV ===== */
+  .bottom-nav {
+    position: fixed; bottom: 0; left: 0; right: 0;
+    background: #0f172aee; backdrop-filter: blur(8px);
+    border-top: 2px solid var(--border);
+    padding: 12px 20px;
+    display: flex; justify-content: space-between; align-items: center;
+    z-index: 100;
+  }
+  .bottom-nav .nav-btn {
+    padding: 14px 36px; border: none; border-radius: 12px;
+    font-size: 1.15rem; font-weight: 800; cursor: pointer;
+    transition: all 0.2s; min-width: 140px;
+  }
+  .bottom-nav .nav-prev {
+    background: var(--border); color: var(--text);
+  }
+  .bottom-nav .nav-prev:hover { background: #475569; }
+  .bottom-nav .nav-next {
+    background: var(--green); color: var(--bg);
+  }
+  .bottom-nav .nav-next:hover { background: #86efac; }
+  .bottom-nav .nav-btn:disabled { opacity: 0.2; cursor: not-allowed; }
+  .bottom-nav .page-indicator {
+    color: var(--muted); font-size: 1rem; font-weight: 600;
   }
 
   /* Responsive */
   @media (max-width: 600px) {
-    .container { padding: 10px; }
-    .card { padding: 16px; }
-    .header h1 { font-size: 1.4rem; }
-    .nav button { padding: 6px 10px; font-size: 0.78rem; }
+    .container { padding: 8px 10px 90px; }
+    .card { padding: 18px; }
+    .header h1 { font-size: 1.6rem; }
+    .nav button { padding: 5px 8px; font-size: 0.75rem; }
+    .bottom-nav .nav-btn { padding: 12px 20px; font-size: 1rem; min-width: 100px; }
   }
 </style>
 </head>
@@ -170,6 +205,7 @@
 </div>
 
 <div class="nav" id="nav"></div>
+<div class="slide-counter" id="slideCounter"></div>
 
 <!-- ====== SLIDE 0: Intro ====== -->
 <div class="slide" id="slide-0">
@@ -186,8 +222,6 @@
     4. Disegna il grafico<br>
     5. Leggi la risposta dal grafico
   </div>
-
-  <p>Premi <strong>Avanti</strong> per cominciare!</p>
 </div>
 </div>
 
@@ -200,11 +234,11 @@
     <li><strong>Piano A:</strong> 5 &euro; fissi + 3 &euro; per ogni articolo</li>
     <li><strong>Piano B:</strong> 20 &euro; fissi, spedizione gratuita</li>
   </ul>
-  <p style="margin-top:12px; font-size:1.15rem;">
-    <strong>Domanda:</strong> Per quanti articoli il Piano A costa <strong>meno</strong> del Piano B?
+  <p style="margin-top:14px; font-size:1.25rem;">
+    Per quanti articoli il Piano A costa <strong>meno</strong> del Piano B?
   </p>
   <div class="callout warn">
-    Prima di toccare i calcoli, dobbiamo capire bene cosa chiedono: vogliamo sapere <strong>quando A conviene</strong>.
+    <strong>Prima di calcolare:</strong> dobbiamo capire bene cosa chiedono. Vogliamo sapere quando A conviene.
   </div>
 </div>
 </div>
@@ -328,7 +362,7 @@
     <button class="btn btn-primary" id="addRowBtn" onclick="addTableRow()">Aggiungi riga</button>
   </div>
 
-  <div class="callout" id="tableComplete" style="display:none;">
+  <div class="callout success" id="tableComplete" style="display:none;">
     <strong>Tabella completa!</strong> Nota come il Costo A cresce mentre il Costo B resta fisso a 20. Si incrociano quando x = 5!
   </div>
 </div>
@@ -353,8 +387,8 @@
     <button class="btn btn-primary" id="addPointBtn" onclick="addPoint()">Segna prossimo punto</button>
   </div>
 
-  <div class="callout" id="pointsComplete" style="display:none;">
-    Tutti i punti sono segnati. Ora uniscili con una riga!
+  <div class="callout success" id="pointsComplete" style="display:none;">
+    <strong>Tutti i punti segnati!</strong> Ora uniscili con una riga!
   </div>
 </div>
 </div>
@@ -363,8 +397,8 @@
 <div class="slide" id="slide-7">
 <div class="card">
   <h2>Passo 4c: Unisci i punti con il righello</h2>
-  <p>Collega i punti <span style="color:var(--accent);">blu</span> (Costo A) con una riga dritta.
-     Il Costo B e' una riga <span style="color:var(--accent2);">rossa orizzontale</span> (resta sempre a 20).</p>
+  <p>Collega i punti <span style="color:var(--accent); font-weight:700;">blu</span> (Costo A) con una riga dritta.
+     Il Costo B e' una riga <span style="color:var(--accent2); font-weight:700;">rossa orizzontale</span> (resta sempre a 20).</p>
 
   <div class="chart-wrap">
     <canvas id="chart-lines"></canvas>
@@ -431,8 +465,8 @@
     <p><strong>Incrocio = costano uguale.</strong> Il punto dove le righe si toccano e' dove i due costi sono identici.</p>
   </div>
 
-  <h3 style="margin-top:16px;">Ricorda i 5 passi:</h3>
-  <ol style="padding-left:20px;">
+  <h3 style="margin-top:18px;">Ricorda i 5 passi:</h3>
+  <ol style="padding-left:24px;">
     <li>Scegli l'incognita (x = cosa non sai)</li>
     <li>Scrivi le due formule</li>
     <li>Risolvi con i calcoli</li>
@@ -440,13 +474,20 @@
     <li>Leggi la risposta (sotto/sopra/incrocio)</li>
   </ol>
 
-  <p style="margin-top:16px; text-align:center; font-size:1.2rem;">
-    <strong>Ora tocca a voi! Prendete la scheda A o B.</strong>
-  </p>
+  <div class="formula green" style="margin-top:20px; font-size:1.5rem;">
+    Ora tocca a voi! Prendete la scheda A o B.
+  </div>
 </div>
 </div>
 
 </div><!-- /container -->
+
+<!-- ===== FIXED BOTTOM NAV ===== -->
+<div class="bottom-nav">
+  <button class="nav-btn nav-prev" id="btnPrev" onclick="goTo(current-1)">&larr; Indietro</button>
+  <span class="page-indicator" id="pageIndicator"></span>
+  <button class="nav-btn nav-next" id="btnNext" onclick="goTo(current+1)">Avanti &rarr;</button>
+</div>
 
 <script>
 // === SLIDE NAVIGATION ===
@@ -469,13 +510,22 @@ function buildNav() {
   });
 }
 
+function updateBottomNav() {
+  document.getElementById('btnPrev').disabled = (current === 0);
+  document.getElementById('btnNext').disabled = (current === slides.length - 1);
+  document.getElementById('pageIndicator').textContent = (current + 1) + ' / ' + slides.length;
+  document.getElementById('slideCounter').textContent = titles[current] + '  (' + (current+1) + '/' + slides.length + ')';
+}
+
 function goTo(i) {
+  if (i < 0 || i >= slides.length) return;
   slides[current].classList.remove('active');
   document.getElementById('nav-' + current).classList.remove('active');
   if (current < i) document.getElementById('nav-' + current).classList.add('done');
   current = i;
   slides[current].classList.add('active');
   document.getElementById('nav-' + current).classList.add('active');
+  updateBottomNav();
   window.scrollTo({ top: 0, behavior: 'smooth' });
   // init charts if needed
   if (i === 6 && !chartPointsInit) initChartPoints();
@@ -496,7 +546,6 @@ function revealSteps(prefix, total) {
     document.getElementById(prefix + '-' + n).classList.add('visible');
   }
   if (n >= total) {
-    // disable button
     event.target.disabled = true;
     event.target.textContent = 'Tutti i passi mostrati';
   }
@@ -543,17 +592,17 @@ function initChartPoints() {
     type: 'scatter',
     data: {
       datasets: [
-        { label: 'Costo A', data: shownA, backgroundColor: '#2563eb', pointRadius: 8, pointHoverRadius: 10 },
-        { label: 'Costo B', data: shownB, backgroundColor: '#dc2626', pointRadius: 8, pointHoverRadius: 10 }
+        { label: 'Costo A', data: shownA, backgroundColor: '#2563eb', pointRadius: 10, pointHoverRadius: 13 },
+        { label: 'Costo B', data: shownB, backgroundColor: '#dc2626', pointRadius: 10, pointHoverRadius: 13 }
       ]
     },
     options: {
       responsive: true,
       scales: {
-        x: { title: { display: true, text: 'Articoli (x)', font: { size: 14 } }, min: 0, max: 8, ticks: { stepSize: 1 } },
-        y: { title: { display: true, text: 'Costo (\u20AC)', font: { size: 14 } }, min: 0, max: 30, ticks: { stepSize: 5 } }
+        x: { title: { display: true, text: 'Articoli (x)', font: { size: 16, weight: 'bold' } }, min: 0, max: 8, ticks: { stepSize: 1, font: { size: 14 } } },
+        y: { title: { display: true, text: 'Costo (\u20AC)', font: { size: 16, weight: 'bold' } }, min: 0, max: 30, ticks: { stepSize: 5, font: { size: 14 } } }
       },
-      plugins: { legend: { labels: { font: { size: 13 } } } }
+      plugins: { legend: { labels: { font: { size: 15 } } } }
     }
   });
 }
@@ -582,20 +631,20 @@ function initChartLines() {
     type: 'scatter',
     data: {
       datasets: [
-        { label: 'Costo A (punti)', data: [...pointsA], backgroundColor: '#2563eb', pointRadius: 7 },
-        { label: 'Costo B (punti)', data: [...pointsB.filter((v,i)=>[0,3,5].includes(i))], backgroundColor: '#dc2626', pointRadius: 7 },
-        { label: 'Costo A (riga)', data: [], type: 'line', borderColor: '#2563eb', borderWidth: 3, pointRadius: 0, fill: false },
-        { label: 'Costo B (riga)', data: [], type: 'line', borderColor: '#dc2626', borderWidth: 3, borderDash: [8,4], pointRadius: 0, fill: false }
+        { label: 'Costo A (punti)', data: [...pointsA], backgroundColor: '#2563eb', pointRadius: 8 },
+        { label: 'Costo B (punti)', data: [...pointsB.filter((v,i)=>[0,3,5].includes(i))], backgroundColor: '#dc2626', pointRadius: 8 },
+        { label: 'Costo A (riga)', data: [], type: 'line', borderColor: '#2563eb', borderWidth: 4, pointRadius: 0, fill: false },
+        { label: 'Costo B (riga)', data: [], type: 'line', borderColor: '#dc2626', borderWidth: 4, borderDash: [10,5], pointRadius: 0, fill: false }
       ]
     },
     options: {
       responsive: true,
       scales: {
-        x: { title: { display: true, text: 'Articoli (x)', font: { size: 14 } }, min: 0, max: 8, ticks: { stepSize: 1 } },
-        y: { title: { display: true, text: 'Costo (\u20AC)', font: { size: 14 } }, min: 0, max: 30, ticks: { stepSize: 5 } }
+        x: { title: { display: true, text: 'Articoli (x)', font: { size: 16, weight: 'bold' } }, min: 0, max: 8, ticks: { stepSize: 1, font: { size: 14 } } },
+        y: { title: { display: true, text: 'Costo (\u20AC)', font: { size: 16, weight: 'bold' } }, min: 0, max: 30, ticks: { stepSize: 5, font: { size: 14 } } }
       },
       plugins: {
-        legend: { labels: { font: { size: 13 }, filter: item => !item.text.includes('riga') } },
+        legend: { labels: { font: { size: 15 }, filter: item => !item.text.includes('riga') } },
         annotation: { annotations: {} }
       }
     }
@@ -611,9 +660,9 @@ function showLines() {
 
 function showIntersection() {
   chartLinesObj.options.plugins.annotation.annotations = {
-    point1: { type: 'point', xValue: 5, yValue: 20, radius: 10, backgroundColor: 'rgba(0,0,0,0)', borderColor: '#000', borderWidth: 3 },
-    line1: { type: 'line', xMin: 5, xMax: 5, yMin: 0, yMax: 20, borderColor: '#888', borderWidth: 1.5, borderDash: [4,4] },
-    label1: { type: 'label', xValue: 5.3, yValue: 22.5, content: 'Incrocio! (5, 20)', font: { size: 13, weight: 'bold' } }
+    point1: { type: 'point', xValue: 5, yValue: 20, radius: 12, backgroundColor: 'rgba(0,0,0,0)', borderColor: '#000', borderWidth: 3 },
+    line1: { type: 'line', xMin: 5, xMax: 5, yMin: 0, yMax: 20, borderColor: '#888', borderWidth: 2, borderDash: [5,5] },
+    label1: { type: 'label', xValue: 6, yValue: 23, content: 'Incrocio! (5, 20)', font: { size: 15, weight: 'bold' }, color: '#000' }
   };
   chartLinesObj.update();
   document.getElementById('intersectionMsg').style.display = 'block';
@@ -630,22 +679,22 @@ function initChartFinal() {
     type: 'scatter',
     data: {
       datasets: [
-        { label: 'Costo A', data: [{x:0,y:5},{x:8,y:29}], type: 'line', borderColor: '#2563eb', borderWidth: 3, pointRadius: 0, fill: false },
-        { label: 'Costo B', data: [{x:0,y:20},{x:8,y:20}], type: 'line', borderColor: '#dc2626', borderWidth: 3, borderDash: [8,4], pointRadius: 0, fill: false },
-        { label: 'Incrocio', data: [{x:5,y:20}], backgroundColor: '#000', pointRadius: 10, pointStyle: 'circle' }
+        { label: 'Costo A', data: [{x:0,y:5},{x:8,y:29}], type: 'line', borderColor: '#2563eb', borderWidth: 4, pointRadius: 0, fill: false },
+        { label: 'Costo B', data: [{x:0,y:20},{x:8,y:20}], type: 'line', borderColor: '#dc2626', borderWidth: 4, borderDash: [10,5], pointRadius: 0, fill: false },
+        { label: 'Incrocio', data: [{x:5,y:20}], backgroundColor: '#000', pointRadius: 12, pointStyle: 'circle' }
       ]
     },
     options: {
       responsive: true,
       scales: {
-        x: { title: { display: true, text: 'Articoli (x)', font: { size: 14 } }, min: 0, max: 8, ticks: { stepSize: 1 } },
-        y: { title: { display: true, text: 'Costo (\u20AC)', font: { size: 14 } }, min: 0, max: 30, ticks: { stepSize: 5 } }
+        x: { title: { display: true, text: 'Articoli (x)', font: { size: 16, weight: 'bold' } }, min: 0, max: 8, ticks: { stepSize: 1, font: { size: 14 } } },
+        y: { title: { display: true, text: 'Costo (\u20AC)', font: { size: 16, weight: 'bold' } }, min: 0, max: 30, ticks: { stepSize: 5, font: { size: 14 } } }
       },
       plugins: {
-        legend: { labels: { font: { size: 13 } } },
+        legend: { labels: { font: { size: 15 } } },
         annotation: { annotations: {
-          vline: { type: 'line', xMin: 5, xMax: 5, yMin: 0, yMax: 20, borderColor: '#888', borderWidth: 1.5, borderDash: [4,4] },
-          label1: { type: 'label', xValue: 5.2, yValue: 22, content: '(5, 20)', font: { size: 12, weight: 'bold' } }
+          vline: { type: 'line', xMin: 5, xMax: 5, yMin: 0, yMax: 20, borderColor: '#888', borderWidth: 2, borderDash: [5,5] },
+          label1: { type: 'label', xValue: 5.2, yValue: 22, content: '(5, 20)', font: { size: 14, weight: 'bold' } }
         }}
       }
     }
@@ -653,19 +702,18 @@ function initChartFinal() {
 }
 
 function showFinalZone() {
-  // Add green fill zone
   chartFinalObj.data.datasets.push({
     label: 'A costa MENO (zona verde)',
     data: [{x:0,y:5},{x:5,y:20},{x:5,y:20},{x:0,y:20}],
     type: 'line', fill: true,
-    backgroundColor: 'rgba(22,163,106,0.2)',
-    borderColor: 'rgba(22,163,106,0.5)',
+    backgroundColor: 'rgba(22,163,106,0.25)',
+    borderColor: 'rgba(22,163,106,0.6)',
     borderWidth: 0, pointRadius: 0
   });
   chartFinalObj.options.plugins.annotation.annotations.braceLabel = {
-    type: 'label', xValue: 2.5, yValue: 2,
+    type: 'label', xValue: 2.5, yValue: 3,
     content: 'A sta SOTTO B = A costa meno',
-    font: { size: 13, weight: 'bold' },
+    font: { size: 15, weight: 'bold' },
     color: '#16a34a'
   };
   chartFinalObj.update();
