@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<title>2C: Statistica e cittadinanza (100 min)</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; background: #fff; color: #000; font-family: -apple-system, "Helvetica Neue", Arial, sans-serif; }
+  .slide { display: none; height: 100vh; padding: 4vh 6vw; flex-direction: column; }
+  .slide.active { display: flex; }
+  .slide h1 { font-size: 4.2vw; font-weight: 800; line-height: 1.1; margin-bottom: 2vh; border-bottom: 3px solid #000; padding-bottom: 1vh; }
+  .slide h2 { font-size: 2.6vw; font-weight: 600; margin-bottom: 1.2vh; }
+  .slide p, .slide li { font-size: 2.1vw; line-height: 1.45; margin-bottom: 1.2vh; }
+  .slide ul, .slide ol { padding-left: 4vw; }
+  .slide .lead { font-size: 2.6vw; font-weight: 600; }
+  .slide .big { font-size: 6vw; font-weight: 800; text-align: center; margin: 3vh 0; }
+  .slide .meta { position: absolute; bottom: 2vh; left: 6vw; right: 6vw; display: flex; justify-content: space-between; font-size: 1.4vw; color: #555; border-top: 1px solid #ccc; padding-top: 1vh; }
+  .timer { position: fixed; top: 2vh; right: 3vw; font-size: 3.2vw; font-weight: 800; font-variant-numeric: tabular-nums; padding: 1vh 2vw; border: 3px solid #000; background: #fff; min-width: 12vw; text-align: center; }
+  .timer.warning { background: #000; color: #fff; }
+  .nav { position: fixed; bottom: 2vh; right: 3vw; display: flex; gap: 1vw; z-index: 10; }
+  .nav button { font-size: 1.8vw; padding: 1vh 2vw; background: #fff; color: #000; border: 2px solid #000; cursor: pointer; font-weight: 600; }
+  .nav button:hover { background: #000; color: #fff; }
+  .timer-controls { position: fixed; top: 2vh; left: 3vw; display: flex; gap: 0.5vw; z-index: 10; }
+  .timer-controls button { font-size: 1.4vw; padding: 0.5vh 1vw; background: #fff; color: #000; border: 1px solid #000; cursor: pointer; }
+  .quote { font-style: italic; font-size: 2vw; padding: 2vh 3vw; border-left: 4px solid #000; margin: 2vh 0; }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3vw; }
+  .box { border: 2px solid #000; padding: 2vh 2vw; }
+  .box h3 { font-size: 2.2vw; margin-bottom: 1vh; }
+  .step { font-weight: 800; font-size: 2.6vw; }
+  @media print {
+    .slide { display: block; page-break-after: always; height: auto; min-height: 100vh; }
+    .timer, .nav, .timer-controls { display: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<div class="timer-controls">
+  <button onclick="startTimer(8)">8m</button>
+  <button onclick="startTimer(10)">10m</button>
+  <button onclick="startTimer(12)">12m</button>
+  <button onclick="startTimer(20)">20m</button>
+  <button onclick="startTimer(3)">3m</button>
+  <button onclick="startTimer(5)">5m</button>
+  <button onclick="startTimer(7)">7m</button>
+  <button onclick="stopTimer()">stop</button>
+</div>
+
+<div class="timer" id="timer">--:--</div>
+
+<!-- SLIDE 1 -->
+<div class="slide active">
+  <h1>Statistica e cittadinanza</h1>
+  <p class="lead">Oggi facciamo statistica come tutte le altre volte.</p>
+  <p class="lead">Una cosa diversa: <strong>i dati di oggi siamo noi</strong>.</p>
+  <p>Avete due fogli sul banco:</p>
+  <ul>
+    <li><strong>Scheda A</strong>: il foglio matematico, si compila a coppie</li>
+    <li><strong>Scheda B</strong>: il sondaggio anonimo, si compila da soli</li>
+  </ul>
+  <p>Niente nome. Niente classe scritta. La scheda B la piegate in 4 e la mettete nella scatola al centro.</p>
+  <div class="meta"><span>Fase 1 di 7: Apertura</span><span>8 min</span></div>
+</div>
+
+<!-- SLIDE 2 -->
+<div class="slide">
+  <h1>Sondaggio anonimo (Scheda B)</h1>
+  <p class="lead">Compilare in silenzio. Da soli.</p>
+  <p>Sulla scheda B trovate 8 domande chiuse. Crocetta sulla risposta.</p>
+  <p>L'ultima domanda è opzionale (campo libero, max 1 riga).</p>
+  <h2 style="margin-top: 3vh;">Protocollo anonimato</h2>
+  <ol>
+    <li>Compili in silenzio</li>
+    <li>Pieghi il foglio in 4</li>
+    <li>Lo metti nella scatola al centro della classe</li>
+    <li>Il prof. di sostegno mescola fisicamente</li>
+    <li>Estraiamo a sorte 10 schede su 25 e leggiamo solo quelle</li>
+  </ol>
+  <p><strong>Le altre 15 non vengono lette da nessuno.</strong></p>
+  <div class="meta"><span>Fase 2 di 7: Sondaggio</span><span>10 min</span></div>
+</div>
+
+<!-- SLIDE 3 -->
+<div class="slide">
+  <h1>Calcolo statistico (Scheda A, Esercizio 1)</h1>
+  <p class="lead">10 schede estratte. Contiamo insieme la domanda #4.</p>
+  <p><em>"Quando ho visto questo, di solito..."</em></p>
+  <h2 style="margin-top: 2vh;">Alla LIM</h2>
+  <ul>
+    <li>3 volontari/e fanno tally (uno per categoria)</li>
+    <li>Tutti compilano la tabella sulla Scheda A</li>
+    <li>Calcolano percentuali e disegnano l'istogramma</li>
+  </ul>
+  <p style="margin-top: 2vh;"><strong>Confronto con ISTAT 2023</strong> (dati visti il 17/4): le nostre percentuali sono più alte o più basse?</p>
+  <div class="meta"><span>Fase 3 di 7: Calcolo statistico</span><span>12 min</span></div>
+</div>
+
+<!-- SLIDE 4 -->
+<div class="slide">
+  <h1>Lettura degli scenari in 1-2-4-All</h1>
+  <div class="quote">
+    Guardate i numeri di <strong>Ex1</strong> (la nostra 2C, dalle 10 schede estratte) e gli scenari di <strong>Ex2</strong> (A, B, C).<br><br>
+    <strong>A quale dei tre scenari assomigliano di più i numeri della 2C?</strong><br>
+    Motivate con <strong>2 numeri concreti</strong>.
+  </div>
+  <h2 style="margin-top: 2vh;">Procedura 1-2-4-All</h2>
+  <ul>
+    <li><span class="step">3 min</span>: silenzio, scegli uno scenario e scrivi 2 numeri (retro Scheda A)</li>
+    <li><span class="step">5 min</span>: in coppia con il compagno di banco, confronto</li>
+    <li><span class="step">7 min</span>: quartetto (banco davanti + banco dietro, senza alzarsi): <strong>1 sola scelta + 2 numeri</strong>. Un portavoce scrive</li>
+    <li><span class="step">5 min</span>: plenaria: ogni quartetto dichiara in 15 secondi, io registro alla LIM</li>
+  </ul>
+  <div class="meta"><span>Fase 4 di 7: Lettura scenari</span><span>20 min totali</span></div>
+</div>
+
+<!-- SLIDE 5 -->
+<div class="slide">
+  <h1>Il modello ridi/zitto/dissento</h1>
+  <p class="lead">Scheda A, Esercizio 2.</p>
+  <p>Tre scenari, sempre 25 persone in classe, sempre lo stesso "bullo". Cosa cambia?</p>
+  <table style="width: 100%; border-collapse: collapse; margin: 2vh 0; font-size: 1.8vw;">
+    <thead>
+      <tr><th style="border: 2px solid #000; padding: 1vh;">Scenario</th><th style="border: 2px solid #000; padding: 1vh;">Ridono</th><th style="border: 2px solid #000; padding: 1vh;">Zitti</th><th style="border: 2px solid #000; padding: 1vh;">Dicono basta</th></tr>
+    </thead>
+    <tbody>
+      <tr><td style="border: 1px solid #000; padding: 1vh;"><strong>A</strong>: normale</td><td style="border: 1px solid #000; padding: 1vh; text-align: center;">5</td><td style="border: 1px solid #000; padding: 1vh; text-align: center;">20</td><td style="border: 1px solid #000; padding: 1vh; text-align: center;">0</td></tr>
+      <tr><td style="border: 1px solid #000; padding: 1vh;"><strong>B</strong>: attiva</td><td style="border: 1px solid #000; padding: 1vh; text-align: center;">0</td><td style="border: 1px solid #000; padding: 1vh; text-align: center;">20</td><td style="border: 1px solid #000; padding: 1vh; text-align: center;">5</td></tr>
+      <tr><td style="border: 1px solid #000; padding: 1vh;"><strong>C</strong>: complice</td><td style="border: 1px solid #000; padding: 1vh; text-align: center;">12</td><td style="border: 1px solid #000; padding: 1vh; text-align: center;">13</td><td style="border: 1px solid #000; padding: 1vh; text-align: center;">0</td></tr>
+    </tbody>
+  </table>
+  <p><strong>In A e B reagiscono in 5 su 25 = 20%.</strong> Lo stesso numero. <strong>Cambia il verso, non la quantità.</strong></p>
+  <div class="meta"><span>Fase 5a di 7: Feedback loop</span><span>10 min</span></div>
+</div>
+
+<!-- SLIDE 6 -->
+<div class="slide">
+  <h1>La soglia critica del 3,5%</h1>
+  <p class="lead">Damon Centola, <em>Change</em>, 2021: University of Pennsylvania.</p>
+  <div class="quote">
+    "Per cambiare l'equilibrio di un gruppo sociale basta che il <strong>3,5%</strong> delle persone cambi comportamento in modo coerente."
+  </div>
+  <p style="margin-top: 2vh;">Calcoliamo (Scheda A, Esercizio 3):</p>
+  <div class="grid">
+    <div class="box">
+      <h3>2C Grafica</h3>
+      <p>25 persone × 0,035 = <strong>0,875 ≈ 1 persona</strong></p>
+    </div>
+    <div class="box">
+      <h3>Morigia-Perdisa</h3>
+      <p>600 persone × 0,035 = <strong>21 persone</strong></p>
+    </div>
+  </div>
+  <p style="margin-top: 2vh;"><strong>1 persona su 25 può iniziare il cambiamento.</strong> 1 sola.</p>
+  <div class="meta"><span>Fase 5b di 7: Soglia critica</span><span>10 min</span></div>
+</div>
+
+<!-- SLIDE 7 -->
+<div class="slide">
+  <h1>Min Specs: Le regole minime</h1>
+  <div class="quote">
+    Quali sono le <strong>3 cose minime DA FARE</strong> e le <strong>3 cose minime DA NON FARE</strong> in 2C, perché nessuno si senta isolato?<br><br>
+    <strong>Comportamenti osservabili.</strong> Non slogan tipo "rispettarsi".
+  </div>
+  <h2 style="margin-top: 2vh;">Procedura 1-2-4-All</h2>
+  <ul>
+    <li><span class="step">3 min</span>: silenzio, scrivi sulla Scheda A (riquadro Min Specs)</li>
+    <li><span class="step">5 min</span>: coppia</li>
+    <li><span class="step">7 min</span>: quartetto, lista finale 3 must / 3 must-not</li>
+    <li><span class="step">5 min</span>: plenaria: ogni quartetto consegna la lista</li>
+  </ul>
+  <div class="meta"><span>Fase 6 di 7: Min Specs</span><span>20 min totali</span></div>
+</div>
+
+<!-- SLIDE 8 -->
+<div class="slide">
+  <h1>Numeri finali</h1>
+  <div class="big">3,5% di 25 = 1</div>
+  <p class="lead" style="text-align: center;">Bastano pochi.</p>
+  <p class="lead" style="text-align: center;">La matematica lo dice.</p>
+  <p class="lead" style="text-align: center; margin-top: 2vh;"><strong>Cosa ne facciamo è scelta vostra.</strong></p>
+  <p style="text-align: center; margin-top: 3vh;">La settimana prossima rivediamo questi dati insieme alle vostre Min Specs.</p>
+  <div class="meta"><span>Fase 7 di 7: Chiusura</span><span>10 min</span></div>
+</div>
+
+<div class="nav">
+  <button onclick="prev()">◀</button>
+  <button onclick="next()">▶</button>
+</div>
+
+<script>
+  let current = 0;
+  const slides = document.querySelectorAll('.slide');
+  function show(i) {
+    slides.forEach((s, idx) => s.classList.toggle('active', idx === i));
+    current = i;
+  }
+  function next() { if (current < slides.length - 1) show(current + 1); }
+  function prev() { if (current > 0) show(current - 1); }
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === ' ') next();
+    if (e.key === 'ArrowLeft') prev();
+  });
+
+  // Timer
+  let timerInterval = null;
+  let endTime = null;
+  function startTimer(minutes) {
+    stopTimer();
+    endTime = Date.now() + minutes * 60 * 1000;
+    updateTimer();
+    timerInterval = setInterval(updateTimer, 250);
+  }
+  function stopTimer() {
+    if (timerInterval) clearInterval(timerInterval);
+    timerInterval = null;
+    document.getElementById('timer').textContent = '--:--';
+    document.getElementById('timer').classList.remove('warning');
+  }
+  function updateTimer() {
+    const ms = endTime - Date.now();
+    const t = document.getElementById('timer');
+    if (ms <= 0) {
+      t.textContent = '00:00';
+      t.classList.add('warning');
+      clearInterval(timerInterval);
+      try { new Audio("data:audio/wav;base64,UklGRl9vT19XQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQAAAAA=").play(); } catch(e) {}
+      return;
+    }
+    const m = Math.floor(ms / 60000);
+    const s = Math.floor((ms % 60000) / 1000);
+    t.textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+    t.classList.toggle('warning', ms < 60000);
+  }
+</script>
+
+</body>
+</html>
